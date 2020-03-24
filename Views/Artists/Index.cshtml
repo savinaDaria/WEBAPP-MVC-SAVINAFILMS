@@ -1,0 +1,91 @@
+﻿@model IEnumerable<SAVINAFILMS.Artist>
+
+@{
+    ViewData["Title"] = "Index";
+}
+   
+    <head>
+        <style>
+            body {
+                background-image: url(https://images.unsplash.com/photo-1485846234645-a62644f84728?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60);
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-size: cover;
+            }
+
+            table {
+                background-color: rgba(0, 0, 0, 0.6);
+            }
+
+            .text-dasha {
+                color: white;
+            }
+
+            .text-dasha-link {
+                color: #581845;
+                font-size: 22px;
+            }
+
+            .text-dasha-link-btn {
+                color: #ff7070;
+            }
+
+            a {
+                color: #fffda6
+            }
+        </style>
+    </head>
+
+<h1 class="text-dasha">АКТОРИ</h1>
+
+<p>
+    <a asp-action="Create" class="text-dasha-link">Додати актора</a>
+</p>
+<table class="table">
+    <thead>
+        <tr class="text-dasha" >
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Birth)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Death)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Sex)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Country)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr class="text-dasha">
+            <td width="10%">
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td width="10%">
+                @Html.DisplayFor(modelItem => item.Birth)
+            </td>
+            <td width="10%">
+                @Html.DisplayFor(modelItem => item.Death)
+            </td>
+            <td width="5%">
+                @Html.DisplayFor(modelItem => item.Sex)
+            </td>
+            <td width="20%">
+                @Html.DisplayFor(modelItem => item.Country.Name)
+            </td>
+            <td width="45%">
+                <a asp-action="Edit" asp-route-id="@item.ArtistId">Редагувати</a> |
+                <a asp-action="Details" asp-route-id="@item.ArtistId">Фільми з актором</a> |
+                <a asp-action="Delete" asp-route-id="@item.ArtistId">Видалити актора</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

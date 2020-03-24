@@ -1,0 +1,46 @@
+﻿@model SAVINAFILMS.FilmGenre
+
+@{
+    ViewData["Title"] = "Create";
+}
+    <head>
+        <style>
+            body {
+                background-image: url(https://d2v9y0dukr6mq2.cloudfront.net/video/thumbnail/r8K5nG9Pxiyh9wvn6/videoblocks-abstract-geometric-background-with-moving-lines-dots-and-triangles-plexus-fantasy-abstract-technology-loop-animations_bufk3nibfw_thumbnail-full01.png);
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-size: cover;
+            }
+        </style>
+    </head>
+
+<h1>Додавання фільму до жанру </h1>
+
+<h4></h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Film.Name" class="control-label"></label>
+                <select asp-for="FilmId" class="form-control" asp-items="ViewBag.FilmId"></select>
+            </div>
+            
+            <input type="hidden" value="@ViewBag.GenreId" name="GenreId" />
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <p>
+        @Html.ActionLink("Повернутися", "Index", new { genreId = @ViewBag.GenreId })
+    </p>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

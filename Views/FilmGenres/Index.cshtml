@@ -1,0 +1,80 @@
+﻿@model IEnumerable<SAVINAFILMS.FilmGenre>
+
+@{
+    ViewData["Title"] = "Фільми за жанром";
+}
+<head>
+    <style>
+        body {
+            background-image: url(https://images.unsplash.com/photo-1485846234645-a62644f84728?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60);
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+
+        table {
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        .text-dasha {
+            color: white;
+        }
+
+        .text-dasha-link {
+            color: #581845;
+            font-size: 22px;
+        }
+
+        .text-dasha-link-btn {
+            color: #ff7070;
+        }
+
+        a {
+            color: #fffda6
+        }
+    </style>
+</head>
+<h1 class="text-dasha">Фільми за жанром </h1>
+
+<p>
+    @Html.ActionLink("Додати фільм до жанру ", "Create", new { GenreId = @ViewBag.GenreId, name = @ViewBag.Name })
+
+</p>
+<div>
+    <a asp-action="Export" asp-route-id="@ViewBag.GenreId">Завантажити інформацію в файл Excel</a>
+</div>
+
+<div>
+    @Html.ActionLink(@"Завантажити інформацію в файл Word", "ExportWord", new { id=@ViewBag.GenreId})
+</div>
+<table class="table">
+    <thead>
+        <tr class="text-dasha">
+            <th>
+                @Html.DisplayNameFor(model => model.Film)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Genre)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr class="text-dasha">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Film.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Genre.Name)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Редагувати</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Про фільм</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Видалити</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

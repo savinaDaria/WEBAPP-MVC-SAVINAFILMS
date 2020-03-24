@@ -1,0 +1,119 @@
+﻿@model IEnumerable<SAVINAFILMS.Director>
+
+@{
+    ViewData["Title"] = "Index";
+}
+<head>
+    <style>
+        body {
+            background-image: url(https://images.unsplash.com/photo-1485846234645-a62644f84728?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60);
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+        }
+
+        table {
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        .text-dasha {
+            color: white;
+        }
+
+        .text-dasha-link {
+            color: #581845;
+            font-size: 22px;
+        }
+
+        .text-dasha-link-btn {
+            color: #ff7070;
+        }
+
+        a {
+            color: #fffda6
+        }
+    </style>
+</head>
+
+<h1 class="text-dasha">Режисери</h1>
+
+<p>
+    <a asp-action="Create">Додати режисера</a>
+</p>
+<table class="table">
+    <thead>
+        <tr class="text-dasha">
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Birth)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Death)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Sex)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Company)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr class="text-dasha">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Birth)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Death)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Sex)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Company.Name)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.DirectorId">Редагувати</a> |
+                    <a asp-action="Details" asp-route-id="@item.DirectorId">Фільми режисера</a> |
+                    <a asp-action="Delete" asp-route-id="@item.DirectorId">Видалити</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="container">
+    <div id="chart1"> </div>
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        google.charts.load('current', { 'packages': ['corechart'], callback: drawChart })
+
+        function drawChart() {
+            $.get('api/Charts/JsonData1', function (JsonData1) {
+                data = google.visualization.arrayToDataTable(JsonData1, false);
+                var option =
+                {
+                    title: "Співвідношення кількості фільмів і режисерів",
+                    width: 500,
+                    height: 400
+                };
+                chart = new google.visualization.PieChart(document.getElementById('chart1'));
+                chart.draw(data, option);
+            })
+        }
+
+    </script>
+
+}

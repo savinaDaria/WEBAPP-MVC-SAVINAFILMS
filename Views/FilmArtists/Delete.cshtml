@@ -1,0 +1,48 @@
+﻿@model SAVINAFILMS.FilmArtist
+
+@{
+    ViewData["Title"] = "Delete";
+}
+    <head>
+        <style>
+            body {
+                background-image: url(https://d2v9y0dukr6mq2.cloudfront.net/video/thumbnail/r8K5nG9Pxiyh9wvn6/videoblocks-abstract-geometric-background-with-moving-lines-dots-and-triangles-plexus-fantasy-abstract-technology-loop-animations_bufk3nibfw_thumbnail-full01.png);
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-size: cover;
+            }
+        </style>
+    </head>
+<h1>Видалити</h1>
+
+<h3>Ви впевнені?</h3>
+<div>
+    <h4>FilmArtist</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Artist)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Artist.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Film)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Film.Name)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index">Повернутися</a>
+    </form>
+</div>
