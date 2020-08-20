@@ -21,7 +21,11 @@ namespace SAVINAFILMS.Controllers
         // GET: FilmArtists
         public async Task<IActionResult> Index(int? id, string? name)
         {
-            if (id == null) return RedirectToAction("Index", "Artists");
+            if (id == 0 || id==null)
+            {
+                var filmartist = _context.FilmArtist.Include(f => f.Film).Include(f => f.Artist).OrderBy(f=>f.Artist.Name);
+                return View(await filmartist.ToListAsync());
+            }
             ViewBag.ArtistId = id;
             ViewBag.Name = name;
             var filmartists = _context.FilmArtist.Where(f => f.ArtistId == id).Include(f => f.Film).Include(f => f.Artist);
@@ -48,11 +52,10 @@ namespace SAVINAFILMS.Controllers
         }
 
         // GET: FilmArtists/Create
-        public IActionResult Create(int ArtistId, string? name)
+        public IActionResult Create()
         {
             ViewData["FilmId"] = new SelectList(_context.Film, "FilmId", "Name");
-            ViewBag.ArtistId = ArtistId;
-            ViewBag.Name = name;
+            ViewData["ArtistId"] = new SelectList(_context.Artist, "ArtistId", "Name");
             return View();
         }
 
@@ -61,19 +64,18 @@ namespace SAVINAFILMS.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int ArtistId , [Bind("Id,FilmId,ArtistId,Description")] FilmArtist filmArtist)
+        public async Task<IActionResult> Create([Bind("Id,FilmId,ArtistId,Description")] FilmArtist filmArtist)
         {
-            var nameA = _context.Artist.Where(fg => fg.ArtistId == ArtistId).FirstOrDefault().Name;
-            filmArtist.ArtistId = ArtistId;
             if (ModelState.IsValid)
             {
                 _context.Add(filmArtist);
                 await _context.SaveChangesAsync();
                
-                return RedirectToAction("Index", "FilmArtists", new { id = ArtistId, name = nameA });
+                return RedirectToAction("Index", "FilmArtists");
             }
             ViewData["FilmId"] = new SelectList(_context.Film, "FilmId", "Name", filmArtist.FilmId);
-            return RedirectToAction("Index", "FilmArtists", new { id = ArtistId, name = nameA });
+            ViewData["ArtistId"] = new SelectList(_context.Artist, "ArtistId", "Name", filmArtist.ArtistId);
+            return View(filmArtist);
 
         }
 
@@ -155,16 +157,8 @@ namespace SAVINAFILMS.Controllers
         // POST: FilmArtists/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int? id, int? f_id)
+        public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            if (id == null && f_id != null)
-            {
-                var fG = _context.FilmArtist.Where(f => f.FilmId == f_id).Include(f => f.Artist).ToList();
-                _context.FilmArtist.RemoveRange(fG);
-                await _context.SaveChangesAsync();
-                bool i;
-                return RedirectToAction("deleting1", "Films", new { i = true });
-            }
             var filmArtist = await _context.FilmArtist.FindAsync(id);
             _context.FilmArtist.Remove(filmArtist);
             await _context.SaveChangesAsync();

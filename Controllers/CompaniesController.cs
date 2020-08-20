@@ -142,6 +142,22 @@ namespace SAVINAFILMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var dir = _context.Director.Where(d => d.CompanyId == id).Include(d => d.Company).ToList();
+            foreach(var d in dir)
+            {
+                var film = _context.Film.Where(f => f.DirectorId == d.DirectorId).Include(f => f.Director).Include(f => f.Country).Include(f => f.Picture).ToList();
+                foreach(var c in film)
+                {
+                    var FilmArt = _context.FilmArtist.Where(f => f.FilmId == c.FilmId).Include(f => f.Film).Include(f => f.Artist).ToList();
+                    _context.FilmArtist.RemoveRange(FilmArt);
+                    var FilmGenre = _context.FilmGenre.Where(f => f.FilmId == c.FilmId).Include(f => f.Film).Include(f => f.Genre).ToList();
+                    _context.FilmGenre.RemoveRange(FilmGenre);
+                    await _context.SaveChangesAsync();
+                }
+                _context.Film.RemoveRange(film);
+            }
+            _context.Director.RemoveRange(dir);
+            await _context.SaveChangesAsync();
             var company = await _context.Company.FindAsync(id);
             _context.Company.Remove(company);
             await _context.SaveChangesAsync();

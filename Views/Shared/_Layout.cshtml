@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims;
+@using Microsoft.AspNetCore.Identity;
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -7,26 +9,67 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <style>
-        .d {color: brown;}
+        .d {
+            color: brown;
+        }
+        .bg-dark1 {
+            background-color:seashell;
+        }
     </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-dark1 border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SAVINAFILMS</a>
-                
+
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1">
-
+                        @*<li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Про додаток</a>
+                        </li>*@
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">PRIVACY</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="SQLQueries"> SQLQueries </a>
                         </li>
                         
+                        @*@if (User.Identity.IsAuthenticated)
+                        {
+                            var claimsIdentity = User.Identity as System.Security.Claims.ClaimsIdentity;
+                            var customUserClaim = claimsIdentity != null ? claimsIdentity.Claims.FirstOrDefault(x => x.Type == "customType") : null;
+                            var customTypeValue = customUserClaim != null ? customUserClaim.Value : User.Identity.Name;
+                            var roleOfUser = claimsIdentity != null ? claimsIdentity.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value : "User";
+                            @if (roleOfUser == "admin")
+                            {
+                                <li class="nav-item" method="post">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Panel">Адмін панель</a>
+                                </li>
+                            }
+                            <li class="navbar-brand"><a>||  @User.Identity.Name  ||</a></li>
+                            <form method="post">
+                                <input asp-area="" asp-controller="Account" asp-action="Logout" type="submit" value="Вихід" />
+                            </form>
+
+                        }
+                        else
+                        {
+
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Вхід</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Реєстрація</a>
+                            </li>
+
+
+                        }*@
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area=""> </a>
+                        </li>
+
                     </ul>
                 </div>
             </div>
@@ -40,7 +83,7 @@
 
     <footer class="border-top hander footer text-muted">
         <div class="container hander">
-            &copy; 2020 - SAVINAFILMS - <a asp-area="" asp-controller="Home" asp-action="Privacy" class="d">Privacy</a>
+            &copy; 2020 - SAVINAFILMS - <a asp-area="" asp-controller="Home" asp-action="Privacy" class="d">Про додаток</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

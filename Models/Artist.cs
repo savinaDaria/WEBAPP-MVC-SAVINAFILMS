@@ -15,6 +15,8 @@ namespace SAVINAFILMS
         public int ArtistId { get; set; }
         [Required(ErrorMessage = "Потрібно заповнити поле")]
         [StringLength(50, MinimumLength = 2, ErrorMessage = "Довжина значення від 2 до 50 символів")]
+        [RegularExpression(@" ^([A-Z][a-z]+)\ ([A-Z][a-z]+)(\ ?([A-Z][a-z]+)?)|([А-ЯІЇЄЩ][а-яіїщє]+)\ ([А-ЯІЇЄЩ][а-яіїщє]+)(\ ?([А-ЯІЇЄЩ][а-яіїщє]+)?)$", ErrorMessage = "Неправильний формат імені")]
+     
         [Display(Name = "Ім'я")]
         public string Name { get; set; }
 
@@ -33,10 +35,10 @@ namespace SAVINAFILMS
         [RegularExpression(@"ч|ж", ErrorMessage = "Оберіть ж(жінка) або ч(чоловік)")]
         [Display(Name = "Стать")]
         public string Sex { get; set; }
-       
         [Display(Name = "Країна")]
-        public int CountryId { get; set; }
 
+        public int CountryId { get; set; }
+        [Display(Name = "Країна")]
         public virtual Country Country { get; set; }
         public virtual ICollection<FilmArtist> FilmArtist { get; set; }
       

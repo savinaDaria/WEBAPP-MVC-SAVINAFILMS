@@ -14,6 +14,7 @@ namespace SAVINAFILMS
         public int CountryId { get; set; }
         [Required(ErrorMessage = "Потрібно заповнити поле")]
         [StringLength(50, MinimumLength = 2, ErrorMessage = "Довжина значення від 2 до 50 символів")]
+        [RegularExpression(@"^([A-Za-z][a-z]+)|([А-Яа-я][а-я]+)|([A-Z]+)|([А-Я]+)$", ErrorMessage = "Неправильний формат назви ")]
         [Display(Name = "Назва країни")]
         public string Name { get; set; }
 

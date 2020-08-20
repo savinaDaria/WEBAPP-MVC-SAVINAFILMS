@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using SAVINAFILMS;
+
 
 namespace SAVINAFILMS.Controllers
 {
@@ -19,8 +19,34 @@ namespace SAVINAFILMS.Controllers
         }
 
         // GET: Films
-        public async Task<IActionResult> Index(int? id, int? dirId, int? c_id)
+        public async Task<IActionResult> Index(int? id, int? dirId, int? c_id, string text1, string char1, int year1)
         {
+            if (char1 != null)
+            {
+                FormattableString query = $"SELECT * FROM Film WHERE Film.release ={year1} AND Film.film_id IN(SELECT Film.film_id FROM Film INNER JOIN Director ON Director.director_id = Film.director_id WHERE Director.sex= {@char1}); ";
+                var c = _context.Film.FromSqlInterpolated(query);
+                var q = await c.ToListAsync();
+                List<Film> film1= new List<Film>();
+                foreach(var k in q)
+                {
+                    var films = _context.Film.Where(f => f.FilmId == k.FilmId).Include(f => f.Country).Include(f => f.Director).FirstOrDefault();
+                    film1.Add(films);
+                }
+                return View(film1);
+            }
+            if (text1 != null)
+            {
+                FormattableString query = $"SELECT * FROM Film WHERE Film.film_id in(SELECT FilmArtist.film_id FROM FilmArtist INNER JOIN Artist ON FilmArtist.artist_id = Artist.artist_id WHERE Artist.[name]={@text1});"; 
+                var c = _context.Film.FromSqlInterpolated(query);
+                var q = await c.ToListAsync();
+                List<Film> film1 = new List<Film>();
+                foreach (var k in q)
+                {
+                    var films = _context.Film.Where(f => f.FilmId == k.FilmId).Include(f => f.Country).Include(f => f.Director).FirstOrDefault();
+                    film1.Add(films);
+                }
+                return View(film1);
+            }
             if (id == null) 
             {
                 if (dirId != null)
@@ -102,11 +128,11 @@ namespace SAVINAFILMS.Controllers
                 .FirstOrDefaultAsync(m => m.FilmId == idFilm);
             return RedirectToAction("Index", "Films", new { c_id = film.CountryId });
         }
-        public async Task<IActionResult> create_country(int? f_id) 
-        { 
+        public IActionResult create_country(int? f_id)
+        {
             return RedirectToAction("Create", "Countries", new { f_id });
         }
-        public async Task<IActionResult> create_director(int? f_id)
+        public IActionResult create_director(int? f_id)
         {
             return RedirectToAction("Create", "Directors", new { f_id });
         }
@@ -220,25 +246,22 @@ namespace SAVINAFILMS.Controllers
         // POST: Films/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            var film = await _context.Film.FindAsync(id);
-            _context.Film.Remove(film);
-            bool a = deleting(id);
-            bool b = deleting1(id);
+            var filmGenre = _context.FilmGenre.Where(f => f.FilmId == id).Include(f => f.Film).Include(f => f.Genre).ToList();
+            _context.FilmGenre.RemoveRange(filmGenre);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            var filmArtist = _context.FilmArtist.Where(f => f.FilmId == id).Include(f => f.Film).Include(f => f.Artist).ToList();
+            _context.FilmArtist.RemoveRange(filmArtist);
+            await _context.SaveChangesAsync();
+
+            var film = await _context.Film.FindAsync(id);
+                _context.Film.Remove(film);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index)); 
         }
-        public bool deleting(int id)
-        {
-            RedirectToAction("Delete","FilmGenres",new{f_id=id });
-            return true;
-        }
-        public bool deleting1(int id)
-        {
-            RedirectToAction("Delete", "FilmArtists", new { f_id = id });
-            return true;
-        }
+
         private bool FilmExists(int id)
         {
             return _context.Film.Any(e => e.FilmId == id);

@@ -1,4 +1,6 @@
-﻿@model IEnumerable<SAVINAFILMS.Genre>
+﻿@using System.Security.Claims;
+@using Microsoft.AspNetCore.Identity;
+@model IEnumerable<SAVINAFILMS.Genre>
 
 @{
     ViewData["Title"] = "Index";
@@ -38,39 +40,59 @@
 
 
 <h1 class="text-dasha">ЖАНРИ</h1>
-
+@if (User.Identity.IsAuthenticated)
+{
+    var claimsIdentity = User.Identity as System.Security.Claims.ClaimsIdentity;
+    var customUserClaim = claimsIdentity != null ? claimsIdentity.Claims.FirstOrDefault(x => x.Type == "customType") : null;
+    var customTypeValue = customUserClaim != null ? customUserClaim.Value : User.Identity.Name;
+    var roleOfUser = claimsIdentity != null ? claimsIdentity.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value : "User";
+    @if (roleOfUser == "admin")
+    {
+        
+    }
+}
 <p>
     <a asp-action="Create">Додати жанр</a>
 </p>
-<table class="table">
-    <thead>
-        <tr class="text-dasha">
-            <th width="50%">
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th width="10%">
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr class="text-dasha">
-                <td width="50%">
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td width="10%">
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td width="40%">
-                    |<a asp-action="Edit" asp-route-id="@item.GenreId">Редагувати</a>|
-                    <a asp-action="Details" asp-route-id="@item.GenreId">Фільми за жанром</a>|
-                   
-                    <a asp-action="Delete" asp-route-id="@item.GenreId">Видалити</a>|
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+        <table class="table">
+            <thead>
+                <tr class="text-dasha">
+                    <th width="50%">
+                        @Html.DisplayNameFor(model => model.Description)
+                    </th>
+                    <th width="10%">
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="text-dasha">
+                        <td width="50%">
+                            @Html.DisplayFor(modelItem => item.Description)
+                        </td>
+                        <td width="10%">
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td width="40%">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                var claimsIdentity = User.Identity as System.Security.Claims.ClaimsIdentity;
+                                var customUserClaim = claimsIdentity != null ? claimsIdentity.Claims.FirstOrDefault(x => x.Type == "customType") : null;
+                                var customTypeValue = customUserClaim != null ? customUserClaim.Value : User.Identity.Name;
+                                var roleOfUser = claimsIdentity != null ? claimsIdentity.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value : "User";
+                                @if (roleOfUser == "admin")
+                                {
+
+                                }
+                            }
+                            <a asp-action="Edit" asp-route-id="@item.GenreId">|Редагувати|</a>
+                            <a asp-action="Delete" asp-route-id="@item.GenreId">|Видалити|</a>
+                            <a asp-action="Details" asp-route-id="@item.GenreId">|Фільми за жанром|</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>

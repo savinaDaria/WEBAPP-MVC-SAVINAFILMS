@@ -1,4 +1,6 @@
-﻿@model IEnumerable<SAVINAFILMS.Film>
+﻿@using System.Security.Claims;
+@using Microsoft.AspNetCore.Identity;
+@model IEnumerable<SAVINAFILMS.Film>
 
 @{
     ViewData["Title"] = "Index";
@@ -11,6 +13,7 @@
             background-repeat: no-repeat;
             background-attachment: fixed;
             background-size: cover;
+            border-bottom-color: coral;
         }
 
         table {
@@ -38,24 +41,34 @@
 
 <h1 class="text-dasha">ФІЛЬМИ</h1>
 
+@if (User.Identity.IsAuthenticated)
+{
+    var claimsIdentity = User.Identity as System.Security.Claims.ClaimsIdentity;
+    var customUserClaim = claimsIdentity != null ? claimsIdentity.Claims.FirstOrDefault(x => x.Type == "customType") : null;
+    var customTypeValue = customUserClaim != null ? customUserClaim.Value : User.Identity.Name;
+    var roleOfUser = claimsIdentity != null ? claimsIdentity.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value : "User";
+    @if (roleOfUser == "admin")
+    {
+
+
+        <div>
+            <h3>Оберіть Excel-файл для заватаження</h3>
+            @using (Html.BeginForm("Import", "Genres", FormMethod.Post, new { enctype = "multipart/form-data", id = "frm-excel" }))
+            {
+                <div>
+                    Завантажте Excel-файл:
+                    <input type="file" name="fileExcel" id="fileExcel" />
+                    <div>
+                        <input type="submit" value="Завантажити" />
+                    </div>
+                </div>
+            }
+        </div>
+    }
+}
 <p>
     <a asp-action="Create" class="text-dasha-link">Додати новий фільм</a>
 </p>
-
-<div>
-    <h3>Оберіть Excel-файл для заватаження</h3>
-    @using (Html.BeginForm("Import", "Genres", FormMethod.Post, new { enctype = "multipart/form-data", id = "frm-excel" }))
-    {
-        <div>
-            Завантажте Excel-файл:
-            <input type="file" name="fileExcel" id="fileExcel" />
-            <div>
-                <input type="submit" value="Завантажити" />
-            </div>
-        </div>
-    }
-</div>
-
 
 <table class="table">
     <thead>
@@ -98,18 +111,32 @@
                     @Html.DisplayFor(modelItem => item.Description)
                 </td>
                 <td width="10%" class="navbar-light">
-                    @Html.ActionLink(@item.Country.Name, "Detail_c", new { idFilm = item.FilmId })
+                    @Html.DisplayFor(modelItem => item.Country.Name)
                 </td>
                 <td width="10%" class="navbar-light">
-                    @Html.ActionLink(@item.Director.Name, "Detail_d", new { idFilm = item.FilmId })
+                    @Html.DisplayFor(modelItem => item.Director.Name)
                 </td>
                 <td width="20%">
-                    <a asp-action="Edit" asp-route-id="@item.FilmId" class="text-dasha-link-btn">Редагувати</a> |
-                    <a asp-action="Details" asp-route-id="@item.FilmId" class="text-dasha-link-btn">Жанри фільму</a> |
-                    <a asp-action="Delete" asp-route-id="@item.FilmId" class="text-dasha-link-btn">Видалити</a>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        var claimsIdentity = User.Identity as System.Security.Claims.ClaimsIdentity;
+                        var customUserClaim = claimsIdentity != null ? claimsIdentity.Claims.FirstOrDefault(x => x.Type == "customType") : null;
+                        var customTypeValue = customUserClaim != null ? customUserClaim.Value : User.Identity.Name;
+                        var roleOfUser = claimsIdentity != null ? claimsIdentity.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value : "User";
+                        @if (roleOfUser == "admin")
+                        {
+
+                        }
+                    }
+                    <a asp-action="Edit" asp-route-id="@item.FilmId" class="text-dasha-link-btn">|Редагувати|</a>
+                    <a asp-action="Delete" asp-route-id="@item.FilmId" class="text-dasha-link-btn">|Видалити|</a>
+                    <a asp-action="Details" asp-route-id="@item.FilmId" class="text-dasha-link-btn">|Жанри фільму|</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
 
+@{ var a = 1;
+    <h1>a=@(a + 2)</h1>
+}

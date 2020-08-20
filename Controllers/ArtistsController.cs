@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using SAVINAFILMS;
 
 namespace SAVINAFILMS.Controllers
 {
@@ -15,14 +13,46 @@ namespace SAVINAFILMS.Controllers
 
         public ArtistsController(lab_films_picContext context)
         {
+            
             _context = context;
         }
 
         // GET: Artists
-        public async Task<IActionResult> Index()
+        
+        public async Task<IActionResult> Index(string char1, string text1,int year1 , int year2)
         {
-            var lab_films_picContext = _context.Artist.Include(a => a.Country);
-            return View(await lab_films_picContext.ToListAsync());
+            if (year2 != 0) 
+            {
+                string var = year2.ToString();
+                FormattableString query = $"SELECT * FROM Artist WHERE Artist.artist_id IN( SELECT DISTINCT Artist.artist_id  FROM Artist INNER JOIN FilmArtist ON Artist.artist_id = FilmArtist.artist_id WHERE FilmArtist.film_id IN(SELECT Film.film_id FROM Film WHERE Film.budget> {year2})); ";
+                var c = _context.Artist.FromSqlInterpolated(query);
+                var q = await c.ToListAsync();
+                return View(q);
+            }
+            if(year1!=0)
+            {
+                FormattableString query = $"SELECT DISTINCT * FROM Artist WHERE Artist.artist_id IN (SELECT FilmArtist.artist_id FROM FilmArtist INNER JOIN Artist ON FilmArtist.artist_id= Artist.artist_id GROUP BY FilmArtist.artist_id HAVING count(FilmArtist.film_id)>{year1});";
+                var c = _context.Artist.FromSqlInterpolated(query);
+                var q = await c.ToListAsync();
+                return View(q);
+            }
+            if (char1 != null && text1 != null)
+            {
+                FormattableString query=$"";
+                if (String.Equals(char1,"<")) { query = $"SELECT * FROM [Artist] WHERE [Artist].[artist_id] IN(SELECT [FilmArtist].[artist_id] FROM [FilmArtist] INNER JOIN [Artist] ON [FilmArtist].[artist_id]= [Artist].[artist_id] GROUP BY [FilmArtist].[artist_id] HAVING count([FilmArtist].[film_id])<(SELECT COUNT([FilmArtist].[film_id])FROM [FilmArtist] INNER JOIN [Artist] ON [FilmArtist].[artist_id] = [Artist].[artist_id] WHERE [Artist].[name]={@text1}));"; }
+                if (String.Equals(char1, ">")) { query = $"SELECT * FROM [Artist] WHERE [Artist].[artist_id] IN(SELECT [FilmArtist].[artist_id] FROM [FilmArtist] INNER JOIN [Artist] ON [FilmArtist].[artist_id]= [Artist].[artist_id] GROUP BY [FilmArtist].[artist_id] HAVING count([FilmArtist].[film_id])>(SELECT COUNT([FilmArtist].[film_id])FROM [FilmArtist] INNER JOIN [Artist] ON [FilmArtist].[artist_id] = [Artist].[artist_id] WHERE [Artist].[name]={@text1}));"; }
+                if (String.Equals(char1, "<=")) { query = $"SELECT * FROM [Artist] WHERE [Artist].[artist_id] IN(SELECT [FilmArtist].[artist_id] FROM [FilmArtist] INNER JOIN [Artist] ON [FilmArtist].[artist_id]= [Artist].[artist_id] GROUP BY [FilmArtist].[artist_id] HAVING count([FilmArtist].[film_id])<=(SELECT COUNT([FilmArtist].[film_id])FROM [FilmArtist] INNER JOIN [Artist] ON [FilmArtist].[artist_id] = [Artist].[artist_id] WHERE [Artist].[name]={@text1}));"; }
+                if (String.Equals(char1, ">=")) { query = $"SELECT * FROM [Artist] WHERE [Artist].[artist_id] IN(SELECT [FilmArtist].[artist_id] FROM [FilmArtist] INNER JOIN [Artist] ON [FilmArtist].[artist_id]= [Artist].[artist_id] GROUP BY [FilmArtist].[artist_id] HAVING count([FilmArtist].[film_id])>=(SELECT COUNT([FilmArtist].[film_id])FROM [FilmArtist] INNER JOIN [Artist] ON [FilmArtist].[artist_id] = [Artist].[artist_id] WHERE [Artist].[name]={@text1}));"; }
+                if (String.Equals(char1, "=")) { query = $"SELECT * FROM [Artist] WHERE [Artist].[artist_id] IN(SELECT [FilmArtist].[artist_id] FROM [FilmArtist] INNER JOIN [Artist] ON [FilmArtist].[artist_id]= [Artist].[artist_id] GROUP BY [FilmArtist].[artist_id] HAVING count([FilmArtist].[film_id])=(SELECT COUNT([FilmArtist].[film_id])FROM [FilmArtist] INNER JOIN [Artist] ON [FilmArtist].[artist_id] = [Artist].[artist_id] WHERE [Artist].[name]={@text1}));"; }
+                var c = _context.Artist.FromSqlInterpolated(query);
+                var q = await c.ToListAsync();
+                return View(q);
+            }
+            else
+            {
+                var lab_films_picContext = _context.Artist.Include(a => a.Country);
+                return View(await lab_films_picContext.ToListAsync());
+            }
         }
 
         // GET: Artists/Details/5
@@ -45,6 +75,7 @@ namespace SAVINAFILMS.Controllers
         // GET: Artists/Create
         public IActionResult Create()
         {
+            var l = _context.Film.Include(f => f.Country);
             ViewData["CountryId"] = new SelectList(_context.Country, "CountryId", "Name");
             return View();
         }
@@ -56,7 +87,6 @@ namespace SAVINAFILMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ArtistId,Name,Birth,Death,Sex,CountryId")] Artist artist)
         {
-            DateTime moment = new DateTime();
             int year = DateTime.Now.Year;
             int min_year = 1700;
             int var = artist.Birth.Year;
@@ -75,7 +105,7 @@ namespace SAVINAFILMS.Controllers
             ViewData["CountryId"] = new SelectList(_context.Country, "CountryId", "Name", artist.CountryId);
             return View(artist);
         }
-        public async Task<IActionResult> create_country(int? a_id)
+        public IActionResult create_country(int? a_id)
         {
             return RedirectToAction("Create", "Countries", new { a_id });
         }
@@ -157,6 +187,9 @@ namespace SAVINAFILMS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var FilmArt = _context.FilmArtist.Where(f => f.ArtistId == id).Include(f => f.Film).Include(f => f.Artist).ToList();
+            _context.FilmArtist.RemoveRange(FilmArt);
+            await _context.SaveChangesAsync();
             var artist = await _context.Artist.FindAsync(id);
             _context.Artist.Remove(artist);
             await _context.SaveChangesAsync();

@@ -1,0 +1,84 @@
+﻿@model SAVINAFILMS.SQLQueries
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Form</title>
+</head>
+
+<body>
+    <h4>1. Країни ,в яких є принаймні 1 фільм в межах </h4>
+    <form asp-action="SQLQueries1">
+        <h4>Від:</h4>
+        <input asp-for="year1" type="number" required="Заповніть поле" pattern="^[ 0-9]+$" min="1600" max="2020" maxlength="3">
+        <h4>Дo:</h4>
+        <input asp-for="year2" type="number" required="Заповніть поле" pattern="." min="1600" max="2020">
+        <button style="margin-top: 5px; background-color:red ; color: white ">DO-SQL</button>
+    </form>
+
+    <h4>==================================================================================================</h4>
+
+    <h4>2. Актори, у яких кількість фільмів ,у яких вони знялися  </h4>
+    <form asp-action="SQLQueries2">
+        <h4> (<,>,>=,<=,=) </h4>
+        <input asp-for="char1" type="text" required="Заповніть поле" maxlength="2">
+        <h4>ніж у актора з ім'ям:</h4>
+        <input asp-for="text1" type="text" required="Заповніть поле" maxlength="51">
+        <button style="margin-top: 5px; background-color:green ;color: white ">DO-SQL</button>
+    </form>
+
+    <h4>==================================================================================================</h4>
+
+    <h4>3. Актори, у яких кількість фільмів ,у яких вони знялися більше(>) ніж </h4>
+    <form asp-action="SQLQueries3">
+        <input asp-for="year1" type="number" required="Заповніть поле" pattern="^[ 0-9]+$" min="1" max="500" maxlength="3">
+        <button style="margin-top: 5px; background-color:dodgerblue ;color: white ">DO-SQL</button>
+    </form>
+
+    <h4>==================================================================================================</h4>
+
+    <h4>4. Знайти режисерів, які нічого не зняли.</h4>
+    <form asp-action="SQLQueries4">
+        <button style="margin-top: 5px; background-color:hotpink ;color: white ">DO-SQL</button>
+    </form>
+
+    <h4>==================================================================================================</h4>
+
+    <h4>5. Знайти фільми, в яких знімався такий  актор або акторка :</h4>
+    <form asp-action="SQLQueries5">
+        <input asp-for="text1" type="text" required="Заповніть поле" maxlength="51">
+        <button style="margin-top: 5px; background-color: darkviolet ;color: white ">DO-SQL</button>
+    </form>
+
+    <h4>==================================================================================================</h4>
+
+    <h4>6. Знайти режисерів, які зняли таку ж кількість фільмів як і режисер :</h4>
+    <form asp-action="SQLQueries6">
+        <input asp-for="text1" type="text" required="Заповніть поле" maxlength="51">
+        <button style="margin-top: 5px; background-color:orange ;color: white ">DO-SQL</button>
+    </form>
+
+    <h4>==================================================================================================</h4>
+
+    <h4>7. Знайти фільми, які зняли режисери ч(чоловічої) або ж(жіночої)статі у певному році :</h4>
+    <form asp-action="SQLQueries7">
+        <h4>Стать(ч або ж): </h4>
+        <input asp-for="char1" type="text" required="Заповніть поле" maxlength="1">
+        <h4>Рік: </h4>
+        <input asp-for="year1" type="number" required="Заповніть поле" pattern="." min="1600" max="2020">
+        <button style="margin-top: 5px; background-color:yellowgreen ;color: white ">DO-SQL</button>
+    </form>
+
+    <h4>==================================================================================================</h4>
+
+    <h4>8. Знайти акторів, які знялись у фільмах бюджет яких більше ніж:</h4>
+    <form asp-action="SQLQueries8"> >
+        <input asp-for="year2" type="number" required="Заповніть поле" pattern="." min="0" >
+        <button style="margin-top: 5px; background-color:lightslategrey ;color: white ">DO-SQL</button>
+    </form>
+
+    <h4>==================================================================================================</h4>
+</body>
+
+</html> 

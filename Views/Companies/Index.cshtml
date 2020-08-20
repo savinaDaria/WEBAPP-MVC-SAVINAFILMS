@@ -1,71 +1,97 @@
-﻿@model IEnumerable<SAVINAFILMS.Company>
+﻿@using System.Security.Claims;
+@using Microsoft.AspNetCore.Identity;
+@model IEnumerable<SAVINAFILMS.Company>
 
 @{
     ViewData["Title"] = "Index";
 }
-    <head>
-        <style>
-            body {
-                background-image: url(https://images.unsplash.com/photo-1485846234645-a62644f84728?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60);
-                background-repeat: no-repeat;
-                background-attachment: fixed;
-                background-size: cover;
-            }
+<head>
+    <style>
+        body {
+            background-image: url(https://images.unsplash.com/photo-1485846234645-a62644f84728?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60);
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+        }
 
-            table {
-                background-color: rgba(0, 0, 0, 0.6);
-            }
+        table {
+            background-color: rgba(0, 0, 0, 0.6);
+        }
 
-            .text-dasha {
-                color: white;
-            }
+        .text-dasha {
+            color: white;
+        }
 
-            .text-dasha-link {
-                color: #581845;
-                font-size: 22px;
-            }
+        .text-dasha-link {
+            color: #581845;
+            font-size: 22px;
+        }
 
-            .text-dasha-link-btn {
-                color: #ff7070;
-            }
+        .text-dasha-link-btn {
+            color: #ff7070;
+        }
 
-            a {
-                color: #fffda6
-            }
-        </style>
-    </head>
+        a {
+            color: #fffda6
+        }
+    </style>
+</head>
+
 <h1 class="text-dasha">КІНОКОМПАНІЇ</h1>
-
+@if (User.Identity.IsAuthenticated)
+{
+    var claimsIdentity = User.Identity as System.Security.Claims.ClaimsIdentity;
+    var customUserClaim = claimsIdentity != null ? claimsIdentity.Claims.FirstOrDefault(x => x.Type == "customType") : null;
+    var customTypeValue = customUserClaim != null ? customUserClaim.Value : User.Identity.Name;
+    var roleOfUser = claimsIdentity != null ? claimsIdentity.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value : "User";
+    @if (roleOfUser == "admin")
+    {
+        
+    }
+} 
 <p>
     <a asp-action="Create">Додати кінокомпанію</a>
 </p>
-<table class="table">
-    <thead>
-        <tr class="text-dasha">
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Year)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr class="text-dasha">
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Year)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.CompanyId">Редагувати</a> |
-                <a asp-action="Details" asp-route-id="@item.CompanyId">Режисери</a> |
-                <a asp-action="Delete" asp-route-id="@item.CompanyId">Видалити</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+        <table class="table">
+            <thead>
+                <tr class="text-dasha">
+                    <th>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Year)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="text-dasha">
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Year)
+                        </td>
+                        <td>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                var claimsIdentity = User.Identity as System.Security.Claims.ClaimsIdentity;
+                                var customUserClaim = claimsIdentity != null ? claimsIdentity.Claims.FirstOrDefault(x => x.Type == "customType") : null;
+                                var customTypeValue = customUserClaim != null ? customUserClaim.Value : User.Identity.Name;
+                                var roleOfUser = claimsIdentity != null ? claimsIdentity.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role).Value : "User";
+                                @if (roleOfUser == "admin")
+                                    {
+
+                                    }
+                                }
+                                <a asp-action="Details" asp-route-id="@item.CompanyId">|Режисери|</a>
+                                <a asp-action="Edit" asp-route-id="@item.CompanyId">|Редагувати|</a>
+                                <a asp-action="Delete" asp-route-id="@item.CompanyId">|Видалити|</a>
+                            
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>

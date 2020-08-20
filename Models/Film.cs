@@ -23,7 +23,7 @@ namespace SAVINAFILMS
         [Display(Name = "Рік виходу")]
         public int Release { get; set; }
         [Required(ErrorMessage = "Потрібно заповнити поле")]
-        [RegularExpression(@"(\d\d)[.](\d\d) (млн|млрд)", ErrorMessage = "Введіть десятковий дріб у форматі хx.xx млн або млрд ")]
+        [RegularExpression(@"^[1-9][0-9]+$", ErrorMessage = "Введіть число ")]
         [DataType(DataType.Currency)]
         [Display(Name = "Бюджет в $")]
         public string Budget { get; set; }

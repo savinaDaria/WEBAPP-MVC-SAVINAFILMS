@@ -30,7 +30,7 @@ namespace SAVINAFILMS.Controllers
             return new JsonResult(cFilms);
         }
 
-        [HttpGet("JsonData1")]
+        [HttpGet("JsonData")]
         public JsonResult JsonData1()
         {var directors = _context.Director.Include(f => f.Film).ToList();
             List<object> dFilms = new List<object>();
